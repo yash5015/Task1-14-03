@@ -27,31 +27,14 @@ const Home = ({ route, navigation }) => {
       StudentData = jsonvalue;
       setData(JSON.stringify(StudentData));
       console.log("Home", jsonvalue, typeof jsonvalue);
-      // setStudent([...Arrayd, jsonvalue]);
       console.log("studentdata", Data);
     } catch (e) {
       console.log("empty data");
     }
   };
 
-  // const getAllKeys = async () => {
-  //   let keys = [];
-  //   try {
-  //     keys = await AsyncStorage.getAllKeys();
-  //   } catch (e) {
-  //     // read key error
-  //     console.log("empty");
-  //   }
-
-  //   console.log("keys are", keys);
-  // };
-
   useEffect(() => {
     getData();
-    // console.log("StudentData via state", JSON.stringify(StudentData));
-    // getData();
-
-    // getAllKeys();
   }, []);
 
   return (
@@ -60,11 +43,11 @@ const Home = ({ route, navigation }) => {
       {/* <Text>Hello {name.name} </Text> */}
       <Text>Hello {userName} </Text>
       <Text>Your Email id: {userEmail} </Text>
-      {/* <Text>{Data}</Text> */}
+      <Text>{Data}</Text>
       <ScrollView style={{ marginVertical: 20, height: 500 }}>
-        {Data.length != 0 ? (
-          JSON.parse(Data).map((item) => (
-            <View style={styles.item} id={item.id}>
+        {/* {Data != null ? (
+          JSON.parse(Data).map((item, id) => (
+            <View style={styles.item} key={id}>
               <AntDesign
                 name="user"
                 size={24}
@@ -87,7 +70,7 @@ const Home = ({ route, navigation }) => {
           ))
         ) : (
           <Text>Student list Empty</Text>
-        )}
+        )} */}
       </ScrollView>
     </View>
   );

@@ -30,11 +30,16 @@ const Login = ({ navigation }) => {
       alert("Please Enter correct main id");
     }
   };
+  const [Data, setData] = useState("");
+  let StudentData = [];
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("UserData");
       const jsonvalue = value != null ? JSON.parse(value) : null;
-      console.log(jsonvalue, typeof jsonvalue);
+      StudentData = jsonvalue;
+      setData(JSON.stringify(StudentData));
+      console.log("Login", jsonvalue, typeof jsonvalue);
+      console.log("LoginData", Data);
 
       setName(jsonvalue.name);
       setSignupEmail(jsonvalue.email);
@@ -46,11 +51,8 @@ const Login = ({ navigation }) => {
     }
   };
   useEffect(() => {
-    navigation.addListener("focus", () => {
-      // Alert.alert("Refreshed");
-      getData();
-    });
-  });
+    getData();
+  }, []);
   return (
     // <KeyboardAvoidingView></KeyboardAvoidingView>
     <ScrollView contentContainerStyle={styles.container}>
@@ -100,7 +102,7 @@ const Login = ({ navigation }) => {
             <Text
               style={{ color: "red" }}
               onPress={() => {
-                navigation.navigate("Signup");
+                navigation.push("Signup");
               }}
             >
               Sign Up

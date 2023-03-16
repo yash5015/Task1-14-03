@@ -18,55 +18,60 @@ const Login = ({ navigation }) => {
   const [signupPhone, setSignupPhone] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
-  // const Arrayd = [];
-  let [Arrayd, setArrayd] = useState([]);
-  const update = async () => {
-    console.log("Run update");
-    const value = await AsyncStorage.getItem("UserData");
+  let [Arrayd, setArrayd] = useState([{ name: "empty" }]);
 
-    const jsonvalue = value != null ? JSON.parse(value) : null;
-    console.log("json value", jsonvalue);
-    let temp = [...jsonvalue];
-    console.log("temp", temp);
-    setArrayd(temp);
-    console.log("Arrayd", Arrayd);
-    // if (jsonvalue != null) setArrayd(temp);
-
-    // try {
-    //   const jsonData = JSON.stringify(newData); // convert object to string
-    //   let existingTransactions = await getTransaction(newData.category);
-    //   const updatedTransactions = [...existingTransactions, jsonData]; // you're having array of string, not array of object
-    //   await AsyncStorage.setItem(
-    //     newData.category,
-    //     JSON.stringify(updatedTransactions)
-    //   );
-    // }
+  const handleUpdate = async () => {
+    try {
+      let Arr = await AsyncStorage.getItem("UserData");
+      console.log("Arr", Arr);
+      if (Arr != null) {
+        let jsonval = JSON.parse(Arr);
+        setArrayd((jsonval) => [...jsonval]);
+        console.log("Arrayd", Arrayd);
+        // await AsyncStorage.setItem("UserData", JSON.stringify(Arrayd));
+        await AsyncStorage.setItem("UserData", JSON.stringify(jsonval));
+        console.log("saved first");
+      } else {
+        // setArrayd((User) => [User]);
+        // console.log("Arrayd", Arrayd);
+        // await AsyncStorage.setItem("UserData", JSON.stringify([User]));
+        console.log("Arrayd", Arrayd);
+        // await AsyncStorage.setItem("UserData", JSON.stringify(Arrayd));
+        await AsyncStorage.setItem("UserData", JSON.stringify([Arrayd]));
+        console.log("saved else first");
+      }
+    } catch (e) {
+      console.log("Error in HomeUpdate ", e);
+    }
   };
-  // update();
-  console.log("outside", Arrayd);
-  const Arry = Arrayd;
   const handleSubmit = async () => {
-    console.log("hello");
-    // const arr = [];
     try {
       const User = { name: signupName, email: signupEmail, phone: signupPhone };
-      let temp1 = [...Arrayd, User];
-      console.log("temp onsignup", temp1);
-      // setArrayd(temp1);
-      setArrayd(temp1);
-
-      // Arrayd.push(User);
-      console.log("Arrayd onsignup", Arrayd);
-
-      await AsyncStorage.setItem("UserData", JSON.stringify(Arry));
-      console.log("saved");
+      console.log("User", User);
+      let Arr = await AsyncStorage.getItem("UserData");
+      console.log("Arr", Arr);
+      if (Arr != "null") {
+        let jsonval = JSON.parse(Arr);
+        setArrayd((jsonval) => [...jsonval, User]);
+        console.log("Arrayd", Arrayd);
+        console.log([...jsonval, User]);
+        await AsyncStorage.setItem(
+          "UserData",
+          JSON.stringify([...jsonval, User])
+        );
+        console.log("saved updated");
+      } else {
+        setArrayd((User) => [User]);
+        console.log("Arrayd", Arrayd);
+        await AsyncStorage.setItem("UserData", JSON.stringify([User]));
+        console.log("saved else updated");
+      }
     } catch (e) {
       console.log("Error in Home", e);
     }
   };
   useEffect(() => {
-    update();
-    handleSubmit();
+    handleUpdate();
   }, []);
 
   return (
@@ -115,7 +120,7 @@ const Login = ({ navigation }) => {
             onPress={() => {
               handleSubmit(),
                 /* 1. Navigate to the Details route with params */
-                navigation.navigate("Home", {
+                navigation.push("Home", {
                   name: { signupName },
                   email: { signupEmail },
                 });
