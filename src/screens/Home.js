@@ -11,93 +11,83 @@ import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ route, navigation }) => {
+  // const { name,email } = route.params;
+
+  console.log("into the home");
+
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [Student, setStudent] = useState([]);
+  const [Data, setData] = useState("");
+  let StudentData = [];
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("UserData");
       const jsonvalue = value != null ? JSON.parse(value) : null;
-      console.log(typeof jsonvalue, jsonvalue);
-
-      setUserName(jsonvalue.name);
-      setUserEmail(jsonvalue.email);
+      StudentData = jsonvalue;
+      setData(JSON.stringify(StudentData));
+      console.log("Home", jsonvalue, typeof jsonvalue);
+      // setStudent([...Arrayd, jsonvalue]);
+      console.log("studentdata", Data);
     } catch (e) {
-      console.log("empty");
+      console.log("empty data");
     }
   };
 
-  const getAllKeys = async () => {
-    let keys = [];
-    try {
-      keys = await AsyncStorage.getAllKeys();
-    } catch (e) {
-      // read key error
-      console.log("empty");
-    }
+  // const getAllKeys = async () => {
+  //   let keys = [];
+  //   try {
+  //     keys = await AsyncStorage.getAllKeys();
+  //   } catch (e) {
+  //     // read key error
+  //     console.log("empty");
+  //   }
 
-    console.log("keys are", keys);
-  };
+  //   console.log("keys are", keys);
+  // };
 
   useEffect(() => {
     getData();
-    getAllKeys();
+    // console.log("StudentData via state", JSON.stringify(StudentData));
+    // getData();
+
+    // getAllKeys();
   }, []);
-  const { email, name } = route.params;
-  const Student = [
-    {
-      id: "1",
-      title: "ABCDEF",
-    },
-    {
-      id: "2",
-      title: "ABCDEF",
-    },
-    {
-      id: "3",
-      title: "ABCDEF",
-    },
-    {
-      id: "4",
-      title: "ABCDEF",
-    },
-    {
-      id: "5",
-      title: "ABCDEF",
-    },
-    {
-      id: "6",
-      title: "ABCDEF",
-    },
-    {
-      id: "7",
-      title: "ABCDEF",
-    },
-    {
-      id: "8",
-      title: "ABCDEF",
-    },
-    {
-      id: "9",
-      title: "ABCDEF",
-    },
-    {
-      id: "10",
-      title: "ABCDEF",
-    },
-  ];
+
   return (
     <View>
       <StatusBar barStyle="default" />
       {/* <Text>Hello {name.name} </Text> */}
       <Text>Hello {userName} </Text>
       <Text>Your Email id: {userEmail} </Text>
+      {/* <Text>{Data}</Text> */}
       <ScrollView style={{ marginVertical: 20, height: 500 }}>
-        {Student.map((item) => (
-          <View style={styles.item} id={item.id}>
-            <AntDesign name="user" size={24} color="black" />
-            <Text style={styles.title}>{item.title}</Text>
-          </View>
-        ))}
+        {Data.length != 0 ? (
+          JSON.parse(Data).map((item) => (
+            <View style={styles.item} id={item.id}>
+              <AntDesign
+                name="user"
+                size={24}
+                style={{ marginHorizontal: 10 }}
+                color="black"
+              />
+              <View>
+                <Text style={styles.title}>
+                  {" "}
+                  <Text>Name: </Text> {item.name}
+                </Text>
+                <Text style={styles.title}>
+                  <Text>Email: </Text> {item.email}
+                </Text>
+                <Text style={styles.title}>
+                  <Text>Phone: </Text> {item.phone}
+                </Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <Text>Student list Empty</Text>
+        )}
       </ScrollView>
     </View>
   );

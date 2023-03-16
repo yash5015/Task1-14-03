@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Home from "./Home";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Login = ({ navigation }) => {
@@ -18,17 +18,56 @@ const Login = ({ navigation }) => {
   const [signupPhone, setSignupPhone] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
-  const handleSubmit = async () => {
-    let data = await AsyncStorage.getItem("UserData");
+  // const Arrayd = [];
+  let [Arrayd, setArrayd] = useState([]);
+  const update = async () => {
+    console.log("Run update");
+    const value = await AsyncStorage.getItem("UserData");
 
-    const User = { name: signupName, email: signupEmail, phone: signupPhone };
-    let arr = JSON.parse(data);
-    arr.push(User);
-    await AsyncStorage.setItem("UserData", JSON.stringify(arr));
+    const jsonvalue = value != null ? JSON.parse(value) : null;
+    console.log("json value", jsonvalue);
+    let temp = [...jsonvalue];
+    console.log("temp", temp);
+    setArrayd(temp);
+    console.log("Arrayd", Arrayd);
+    // if (jsonvalue != null) setArrayd(temp);
 
-    // await AsyncStorage.setItem("UserData", JSON.stringify(User));
-    console.log("storage set", User);
+    // try {
+    //   const jsonData = JSON.stringify(newData); // convert object to string
+    //   let existingTransactions = await getTransaction(newData.category);
+    //   const updatedTransactions = [...existingTransactions, jsonData]; // you're having array of string, not array of object
+    //   await AsyncStorage.setItem(
+    //     newData.category,
+    //     JSON.stringify(updatedTransactions)
+    //   );
+    // }
   };
+  // update();
+  console.log("outside", Arrayd);
+  const Arry = Arrayd;
+  const handleSubmit = async () => {
+    console.log("hello");
+    // const arr = [];
+    try {
+      const User = { name: signupName, email: signupEmail, phone: signupPhone };
+      let temp1 = [...Arrayd, User];
+      console.log("temp onsignup", temp1);
+      // setArrayd(temp1);
+      setArrayd(temp1);
+
+      // Arrayd.push(User);
+      console.log("Arrayd onsignup", Arrayd);
+
+      await AsyncStorage.setItem("UserData", JSON.stringify(Arry));
+      console.log("saved");
+    } catch (e) {
+      console.log("Error in Home", e);
+    }
+  };
+  useEffect(() => {
+    update();
+    handleSubmit();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -74,12 +113,12 @@ const Login = ({ navigation }) => {
         >
           <TouchableOpacity
             onPress={() => {
-              handleSubmit();
-              /* 1. Navigate to the Details route with params */
-              navigation.navigate("Home", {
-                name: { signupName },
-                email: { signupEmail },
-              });
+              handleSubmit(),
+                /* 1. Navigate to the Details route with params */
+                navigation.navigate("Home", {
+                  name: { signupName },
+                  email: { signupEmail },
+                });
             }}
           >
             <Text style={styles.btn}>Sign Up</Text>

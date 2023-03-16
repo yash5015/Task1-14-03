@@ -38,9 +38,9 @@ const Login = ({ navigation }) => {
 
       setName(jsonvalue.name);
       setSignupEmail(jsonvalue.email);
-      console.log("login username", name);
-      console.log("signup email", signupEmail);
-      console.log("login useremail", email);
+      // console.log("login username", name);
+      // console.log("signup email", signupEmail);
+      // console.log("login useremail", email);
     } catch (e) {
       console.log("empty");
     }
@@ -105,6 +105,14 @@ const Login = ({ navigation }) => {
             >
               Sign Up
             </Text>
+          </Text>
+          <Text
+            style={{ color: "red" }}
+            onPress={() => {
+              navigation.navigate("Home");
+            }}
+          >
+            Home
           </Text>
         </View>
       </View>
