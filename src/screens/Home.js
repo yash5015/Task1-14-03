@@ -6,7 +6,7 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -17,8 +17,8 @@ const Home = ({ route, navigation }) => {
 
   const [AllKeys, setAllKeys] = useState([]);
   const [data, setdata] = useState([]);
+
   let Emailkeys = [];
-  let UserData = [];
   const getKeys = async () => {
     try {
       Emailkeys = await AsyncStorage.getAllKeys();
@@ -27,56 +27,31 @@ const Home = ({ route, navigation }) => {
       console.log("Read key error", e);
     }
 
-    console.log(Emailkeys);
+    console.log("Home wali", Emailkeys);
     setAllKeys(Emailkeys);
+    console.log("after set allkeys", AllKeys);
   };
 
   // Get all data logic
 
-  const getAllData = async (Emailkeys) => {
-    if (Emailkeys) {
-      try {
-        for (const key of AllKeys) {
-          UserData = await AsyncStorage.getItem(key);
-          console.log(UserData);
-        }
-      } catch (error) {
-        console.log("Error in getting all values of keys", error);
-      }
-    } else {
-      console.log("Empty EmailKeys");
-    }
-  };
+  let UserData = [];
+  // const getMultiple = async () => {
+  //   let values;
+  //   try {
+  //     values = await AsyncStorage.multiGet(AllKeys);
+  //   } catch (e) {
+  //     // read error
+  //     console.log("error at multi get", e);
+  //   }
+  //   console.log("values", JSON.parse(values[0][1]));
 
-  let Emailvalues;
-  const getMultiple = async () => {
-    try {
-      Emailvalues = await AsyncStorage.multiGet(Emailkeys);
-    } catch (e) {
-      // read error
-      console.log("At Multiple error", e);
-    }
-    console.log(Emailvalues);
-
-    // example console.log output:
-    // [ ['@MyApp_user', 'myUserValue'], ['@MyApp_key', 'myKeyValue'] ]
-  };
-
-  const getData = async (keyitem) => {
-    try {
-      return await AsyncStorage.getItem(keyitem);
-    } catch (e) {
-      // read error
-      console.log("getting error", e);
-    }
-
-    console.log("Done.");
-  };
-
-  useEffect(() => {
+  //   // example console.log output:
+  //   // [ ['@MyApp_user', 'myUserValue'], ['@MyApp_key', 'myKeyValue'] ]
+  // };
+  useMemo(() => {
     getKeys();
     // getMultiple();
-    getAllData();
+    console.log("Under useEffect", AllKeys);
   }, []);
 
   return (
@@ -86,48 +61,46 @@ const Home = ({ route, navigation }) => {
       <Text>Hello {Loginname} </Text>
       <Text>Your Email id: {Loginemail} </Text>
       <Text>Your Phone number is: {Loginphone} </Text>
-      <Text>{AllKeys}</Text>
-      {/* fetching Details with keys */}
-      {/* {AllKeys.map(async (keys, id) =>
-        console.log(await AsyncStorage.getItem("keys"))
-      )} */}
-      {/* fetching Details with keys */}
-      <ScrollView style={{ marginVertical: 20, height: 500 }}>
-        {{ AllKeys }.length != 0 ? (
-          AllKeys.map(
-            (itemdata, id) => (
-              console.log(itemdata),
-              (
-                // console.log(getData(item)),
-                // (console.log(await AsyncStorage.getItem("item")),
+      <Text>{JSON.stringify(AllKeys)}</Text>
+      {console.log("inside length", AllKeys.length)}
+      {AllKeys
+        ? (console.log("inside return", JSON.stringify(AllKeys)),
+          (
+            <ScrollView style={{ marginVertical: 20, height: 500 }}>
+              {AllKeys.length != 0 ? (
+                AllKeys.map((itemdata, id) => (
+                  // console.log(itemdata),
 
-                <View style={styles.item} key={id}>
-                  <AntDesign
-                    name="user"
-                    size={24}
-                    style={{ marginHorizontal: 10 }}
-                    color="black"
-                  />
-                  <View>
-                    <Text style={styles.title}>
-                      {" "}
-                      <Text>Name: </Text> {data.name}
-                    </Text>
-                    <Text style={styles.title}>
-                      <Text>Email: </Text> {itemdata}
-                    </Text>
-                    <Text style={styles.title}>
-                      <Text>Phone: </Text> {data.phone}
-                    </Text>
+                  // (console.log(await AsyncStorage.getItem("item")),
+                  // (data = await AsyncStorage.getItem(itemdata)),
+                  <View style={styles.item} key={id}>
+                    <AntDesign
+                      name="user"
+                      size={24}
+                      style={{ marginHorizontal: 10 }}
+                      color="black"
+                    />
+                    <View>
+                      <Text style={styles.title}>
+                        {" "}
+                        <Text>Name: </Text> {data.name}
+                      </Text>
+                      <Text style={styles.title}>
+                        <Text>Email: </Text> {itemdata}
+                      </Text>
+                      <Text style={styles.title}>
+                        <Text>Phone: </Text> {data.phone}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              )
-            )
-          )
-        ) : (
-          <Text>Student list Empty</Text>
-        )}
-      </ScrollView>
+                ))
+              ) : (
+                <Text>Student list Empty</Text>
+              )}
+            </ScrollView>
+          ))
+        : (console.log("loding data", AllKeys.length),
+          (<Text>Loading...</Text>))}
     </View>
   );
 };
