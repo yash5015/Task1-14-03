@@ -17,56 +17,32 @@ const Login = ({ navigation }) => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPhone, setSignupPhone] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-
+  const [isSaved, setIsSaved] = useState(false);
   // const Arrayd = [];
   let [Arrayd, setArrayd] = useState([]);
-  const update = async () => {
-    console.log("Run update");
-    const value = await AsyncStorage.getItem("UserData");
 
-    const jsonvalue = value != null ? JSON.parse(value) : null;
-    console.log("json value", jsonvalue);
-    let temp = [...jsonvalue];
-    console.log("temp", temp);
-    setArrayd(temp);
-    console.log("Arrayd", Arrayd);
-    // if (jsonvalue != null) setArrayd(temp);
-
-    // try {
-    //   const jsonData = JSON.stringify(newData); // convert object to string
-    //   let existingTransactions = await getTransaction(newData.category);
-    //   const updatedTransactions = [...existingTransactions, jsonData]; // you're having array of string, not array of object
-    //   await AsyncStorage.setItem(
-    //     newData.category,
-    //     JSON.stringify(updatedTransactions)
-    //   );
-    // }
-  };
-  // update();
-  console.log("outside", Arrayd);
   const Arry = Arrayd;
-  const handleSubmit = async () => {
-    console.log("hello");
-    // const arr = [];
+  const handleSave = async () => {
     try {
       const User = { name: signupName, email: signupEmail, phone: signupPhone };
-      let temp1 = [...Arrayd, User];
-      console.log("temp onsignup", temp1);
-      // setArrayd(temp1);
-      setArrayd(temp1);
 
-      // Arrayd.push(User);
-      console.log("Arrayd onsignup", Arrayd);
+      await AsyncStorage.setItem(
+        User.email,
+        JSON.stringify({ name: User.name, phone: User.phone })
+      );
+      await AsyncStorage.removeItem("UserData");
+      setIsSaved(true);
+      let check = await AsyncStorage.getItem(User.email);
 
-      await AsyncStorage.setItem("UserData", JSON.stringify(Arry));
-      console.log("saved");
+      console.log("saved", User.email, check, typeof check);
     } catch (e) {
       console.log("Error in Home", e);
     }
   };
+
   useEffect(() => {
-    update();
-    handleSubmit();
+    // update();
+    // handleSubmit();
   }, []);
 
   return (
@@ -111,18 +87,29 @@ const Login = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              handleSubmit(),
+          {isSaved === true ? (
+            <TouchableOpacity
+              onPress={() => {
+                // handleSave(),
                 /* 1. Navigate to the Details route with params */
                 navigation.navigate("Home", {
                   name: { signupName },
                   email: { signupEmail },
                 });
-            }}
-          >
-            <Text style={styles.btn}>Sign Up</Text>
-          </TouchableOpacity>
+              }}
+            >
+              <Text style={styles.btn}>Go to Home Page</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                handleSave();
+              }}
+            >
+              <Text style={styles.btn}>Save</Text>
+            </TouchableOpacity>
+          )}
+
           <View style={{ borderBottomWidth: 2, borderColor: "#e2e2e2" }}></View>
 
           <View
