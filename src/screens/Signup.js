@@ -20,33 +20,11 @@ const Login = ({ navigation }) => {
   const [isSaved, setIsSaved] = useState(false);
   // const Arrayd = [];
   let [Arrayd, setArrayd] = useState([]);
-  // const update = async () => {
-  //   console.log("Run update");
-  //   const value = await AsyncStorage.getItem("UserData");
 
-  //   const jsonvalue = value != null ? JSON.parse(value) : null;
-  //   console.log("json value", jsonvalue);
-  //   let temp = [...jsonvalue];
-  //   console.log("temp", temp);
-  //   setArrayd(temp);
-  //   console.log("Arrayd", Arrayd);
-  //   // if (jsonvalue != null) setArrayd(temp);
-  // };
-  // update();
-  // console.log("outside", Arrayd);
   const Arry = Arrayd;
   const handleSave = async () => {
     try {
       const User = { name: signupName, email: signupEmail, phone: signupPhone };
-      // let temp1 = [...Arrayd, User];
-      // console.log("temp onsignup", temp1);
-      // // setArrayd(temp1);
-      // setArrayd(temp1);
-
-      // // Arrayd.push(User);
-      // console.log("Arrayd onsignup", Arrayd);
-
-      // await AsyncStorage.setItem("UserData", JSON.stringify(Arry));
 
       await AsyncStorage.setItem(
         User.email,

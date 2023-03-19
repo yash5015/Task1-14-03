@@ -17,7 +17,7 @@ const Home = ({ route, navigation }) => {
 
   const [AllKeys, setAllKeys] = useState([]);
   const [data, setdata] = useState([]);
-
+  const [isloading, setIsLoading] = useState(true);
   let Emailkeys = [];
   const getKeys = async () => {
     try {
@@ -30,40 +30,78 @@ const Home = ({ route, navigation }) => {
     console.log("Home wali", Emailkeys);
     setAllKeys(Emailkeys);
     console.log("after set allkeys", AllKeys);
+    let values;
+    try {
+      values = await AsyncStorage.multiGet(AllKeys);
+    } catch (e) {
+      // read error
+      console.log("error at multi get", e);
+    }
+    console.log("values", values);
+    setdata(values);
+    setIsLoading(false);
   };
 
   // Get all data logic
 
-  let UserData = [];
-  // const getMultiple = async () => {
-  //   let values;
-  //   try {
-  //     values = await AsyncStorage.multiGet(AllKeys);
-  //   } catch (e) {
-  //     // read error
-  //     console.log("error at multi get", e);
-  //   }
-  //   console.log("values", JSON.parse(values[0][1]));
-
-  //   // example console.log output:
-  //   // [ ['@MyApp_user', 'myUserValue'], ['@MyApp_key', 'myKeyValue'] ]
-  // };
-  useMemo(() => {
+  let Userdata = [];
+  const getMultiple = async (AllKeys) => {
+    let values;
+    try {
+      values = await AsyncStorage.multiGet(AllKeys);
+    } catch (e) {
+      // read error
+      console.log("error at multi get", e);
+    }
+    setdata(values);
+  };
+  useEffect(() => {
     getKeys();
-    // getMultiple();
-    console.log("Under useEffect", AllKeys);
-  }, []);
+  }, [AllKeys.length == 0]);
 
   return (
     <View>
       <StatusBar barStyle="default" />
-      {/* <Text>Hello {JSON.stringify(route.params)} </Text> */}
       <Text>Hello {Loginname} </Text>
       <Text>Your Email id: {Loginemail} </Text>
       <Text>Your Phone number is: {Loginphone} </Text>
-      <Text>{JSON.stringify(AllKeys)}</Text>
-      {console.log("inside length", AllKeys.length)}
-      {AllKeys
+      {isloading === false ? (
+        <ScrollView style={{ marginVertical: 20, height: 500 }}>
+          {data.length != 0 ? (
+            data.map((itemdata, id) => (
+              <View style={styles.item} key={id}>
+                <AntDesign
+                  name="user"
+                  size={24}
+                  style={{ marginHorizontal: 10 }}
+                  color="black"
+                />
+                <View>
+                  <Text style={styles.title}>
+                    {" "}
+                    <Text>Name: </Text> {JSON.parse(itemdata[1]).name}
+                  </Text>
+                  <Text style={styles.title}>
+                    <Text>Email: </Text> {itemdata[0]}
+                  </Text>
+                  <Text style={styles.title}>
+                    <Text>Phone: </Text>
+                    {JSON.parse(itemdata[1]).phone}
+                  </Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text>No Registered User</Text>
+          )}
+        </ScrollView>
+      ) : (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      )}
+
+      {/* {AllKeys
         ? (console.log("inside return", JSON.stringify(AllKeys)),
           (
             <ScrollView style={{ marginVertical: 20, height: 500 }}>
@@ -100,7 +138,7 @@ const Home = ({ route, navigation }) => {
             </ScrollView>
           ))
         : (console.log("loding data", AllKeys.length),
-          (<Text>Loading...</Text>))}
+          (<Text>Loading...</Text>))} */}
     </View>
   );
 };
