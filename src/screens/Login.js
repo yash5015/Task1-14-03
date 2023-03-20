@@ -20,9 +20,9 @@ const Login = ({ navigation }) => {
 
   const [password, setPassword] = useState("");
   const emailLogin = async () => {
-    console.log("emailid", email);
+    // console.log("emailid", email);
     let inputEmail = await AsyncStorage.getItem(email);
-    console.log("inputEmail", inputEmail);
+    // console.log("inputEmail", inputEmail);
     if (inputEmail) {
       navigation.navigate("Home", {
         Loginname: JSON.parse(inputEmail).name,
