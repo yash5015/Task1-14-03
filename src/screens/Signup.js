@@ -17,61 +17,32 @@ const Login = ({ navigation }) => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPhone, setSignupPhone] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
+  // const Arrayd = [];
+  let [Arrayd, setArrayd] = useState([]);
 
-  let [Arrayd, setArrayd] = useState([{ name: "empty" }]);
-
-  const handleUpdate = async () => {
-    try {
-      let Arr = await AsyncStorage.getItem("UserData");
-      console.log("Arr", Arr);
-      if (Arr != null) {
-        let jsonval = JSON.parse(Arr);
-        setArrayd((jsonval) => [...jsonval]);
-        console.log("Arrayd", Arrayd);
-        // await AsyncStorage.setItem("UserData", JSON.stringify(Arrayd));
-        await AsyncStorage.setItem("UserData", JSON.stringify(jsonval));
-        console.log("saved first");
-      } else {
-        // setArrayd((User) => [User]);
-        // console.log("Arrayd", Arrayd);
-        // await AsyncStorage.setItem("UserData", JSON.stringify([User]));
-        console.log("Arrayd", Arrayd);
-        // await AsyncStorage.setItem("UserData", JSON.stringify(Arrayd));
-        await AsyncStorage.setItem("UserData", JSON.stringify([Arrayd]));
-        console.log("saved else first");
-      }
-    } catch (e) {
-      console.log("Error in HomeUpdate ", e);
-    }
-  };
-  const handleSubmit = async () => {
+  const Arry = Arrayd;
+  const handleSave = async () => {
     try {
       const User = { name: signupName, email: signupEmail, phone: signupPhone };
-      console.log("User", User);
-      let Arr = await AsyncStorage.getItem("UserData");
-      console.log("Arr", Arr);
-      if (Arr != "null") {
-        let jsonval = JSON.parse(Arr);
-        setArrayd((jsonval) => [...jsonval, User]);
-        console.log("Arrayd", Arrayd);
-        console.log([...jsonval, User]);
-        await AsyncStorage.setItem(
-          "UserData",
-          JSON.stringify([...jsonval, User])
-        );
-        console.log("saved updated");
-      } else {
-        setArrayd((User) => [User]);
-        console.log("Arrayd", Arrayd);
-        await AsyncStorage.setItem("UserData", JSON.stringify([User]));
-        console.log("saved else updated");
-      }
+
+      await AsyncStorage.setItem(
+        User.email,
+        JSON.stringify({ name: User.name, phone: User.phone })
+      );
+      await AsyncStorage.removeItem("UserData");
+      setIsSaved(true);
+      let check = await AsyncStorage.getItem(User.email);
+
+      console.log("saved", User.email, check, typeof check);
     } catch (e) {
       console.log("Error in Home", e);
     }
   };
+
   useEffect(() => {
-    handleUpdate();
+    // update();
+    // handleSubmit();
   }, []);
 
   return (
@@ -116,18 +87,29 @@ const Login = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              handleSubmit(),
+          {isSaved === true ? (
+            <TouchableOpacity
+              onPress={() => {
+                // handleSave(),
                 /* 1. Navigate to the Details route with params */
                 navigation.push("Home", {
                   name: { signupName },
                   email: { signupEmail },
                 });
-            }}
-          >
-            <Text style={styles.btn}>Sign Up</Text>
-          </TouchableOpacity>
+              }}
+            >
+              <Text style={styles.btn}>Go to Home Page</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                handleSave();
+              }}
+            >
+              <Text style={styles.btn}>Save</Text>
+            </TouchableOpacity>
+          )}
+
           <View style={{ borderBottomWidth: 2, borderColor: "#e2e2e2" }}></View>
 
           <View

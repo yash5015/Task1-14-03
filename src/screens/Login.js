@@ -16,43 +16,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Login = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
   const [password, setPassword] = useState("");
-  const emailLogin = () => {
+  const emailLogin = async () => {
     console.log("emailid", email);
-    console.log("SignupEmailid", signupEmail);
-    if (email === signupEmail) {
+    let inputEmail = await AsyncStorage.getItem(email);
+    console.log("inputEmail", inputEmail);
+    if (inputEmail) {
       navigation.navigate("Home", {
-        Loginname: { name },
-        Loginemail: { email },
+        Loginname: JSON.parse(inputEmail).name,
+        Loginemail: email,
+        Loginphone: JSON.parse(inputEmail).phone,
       });
     } else {
-      alert("Please Enter correct main id");
+      alert("User Not Found");
     }
   };
-  const [Data, setData] = useState("");
-  let StudentData = [];
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("UserData");
-      const jsonvalue = value != null ? JSON.parse(value) : null;
-      StudentData = jsonvalue;
-      setData(JSON.stringify(StudentData));
-      console.log("Login", jsonvalue, typeof jsonvalue);
-      console.log("LoginData", Data);
-
-      setName(jsonvalue.name);
-      setSignupEmail(jsonvalue.email);
-      // console.log("login username", name);
-      // console.log("signup email", signupEmail);
-      // console.log("login useremail", email);
-    } catch (e) {
-      console.log("empty");
-    }
-  };
-  useEffect(() => {
-    getData();
-  }, []);
   return (
     // <KeyboardAvoidingView></KeyboardAvoidingView>
     <ScrollView contentContainerStyle={styles.container}>
@@ -79,11 +59,6 @@ const Login = ({ navigation }) => {
           style={{ alignItems: "center" }}
           onPress={() => {
             emailLogin();
-            /* 1. Navigate to the Details route with params */
-            // navigation.navigate("Home", {
-            //   Loginname: { name },
-            //   Loginemail: { email },
-            // });
           }}
         >
           <Text style={styles.btn}>Sign In</Text>
