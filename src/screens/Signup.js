@@ -34,7 +34,7 @@ const Login = ({ navigation }) => {
       setIsSaved(true);
       let check = await AsyncStorage.getItem(User.email);
 
-      console.log("saved", User.email, check, typeof check);
+      // console.log("saved", User.email, check, typeof check);
     } catch (e) {
       console.log("Error in Home", e);
     }
