@@ -68,29 +68,31 @@ const Home = ({ route, navigation }) => {
       {isloading === false ? (
         <ScrollView style={{ marginVertical: 20, height: 500 }}>
           {data.length != 0 ? (
-            data.map((itemdata, id) => (
-              <View style={styles.item} key={id}>
-                <AntDesign
-                  name="user"
-                  size={24}
-                  style={{ marginHorizontal: 10 }}
-                  color="black"
-                />
-                <View>
-                  <Text style={styles.title}>
-                    {" "}
-                    <Text>Name: </Text> {JSON.parse(itemdata[1]).name}
-                  </Text>
-                  <Text style={styles.title}>
-                    <Text>Email: </Text> {itemdata[0]}
-                  </Text>
-                  <Text style={styles.title}>
-                    <Text>Phone: </Text>
-                    {JSON.parse(itemdata[1]).phone}
-                  </Text>
+            data.map((itemdata, id) =>
+              itemdata[0] !== "alreadyLaunched" ? (
+                <View style={styles.item} key={id}>
+                  <AntDesign
+                    name="user"
+                    size={24}
+                    style={{ marginHorizontal: 10 }}
+                    color="black"
+                  />
+                  <View>
+                    <Text style={styles.title}>
+                      {" "}
+                      <Text>Name: </Text> {JSON.parse(itemdata[1]).name}
+                    </Text>
+                    <Text style={styles.title}>
+                      <Text>Email: </Text> {itemdata[0]}
+                    </Text>
+                    <Text style={styles.title}>
+                      <Text>Phone: </Text>
+                      {JSON.parse(itemdata[1]).phone}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ))
+              ) : null
+            )
           ) : (
             <Text>No Registered User</Text>
           )}
