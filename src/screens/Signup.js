@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
         User.email,
         JSON.stringify({ name: User.name, phone: User.phone })
       );
-      await AsyncStorage.removeItem("UserData");
+      await AsyncStorage.removeItem("alreadyLaunched");
       setIsSaved(true);
       let check = await AsyncStorage.getItem(User.email);
 
